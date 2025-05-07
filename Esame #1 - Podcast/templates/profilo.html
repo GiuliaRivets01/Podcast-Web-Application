@@ -1,0 +1,54 @@
+{% extends "base.html" %}
+{% block title %}Profile{% endblock %}
+{% block profile_active %}active{% endblock %}
+
+{% block display %}d-none{% endblock %}
+{% block main_size %}col-12{% endblock %}
+
+{% block content %}
+<!-- INFO UTENTE -->
+<div id ="paginaPersonale" class="container-fluid">
+    <div class="d-flex align-items-center">
+        <div class="col-lg-4 col-4 imgProfile">
+            <img class="profileImage" src="{{ url_for('static', filename=user.immagine_profilo) }}" alt="Immagine profilo">
+        </div>
+        <div class="col-lg-8 col-8">
+            <h2 class="display-2">{{user.nickname}}</h3>
+            <div class="testoProfilo">
+                {% if user.tipo %}
+                <p>Tipologia di utente: <strong>creatore</strong><p>
+                {% else %}
+                <p>Tipologia di utente: <strong>ascoltatore</strong></p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- LISTA DI PODCAST SEGUITI DALL'UTENTE -->
+<!-- Se l'utente non segue alcun podcast, questa sezione non gli viene mostrata -->
+{% if follow %} 
+<div class="testoPodSeguito">
+  <h3>Podcast che segui:</h3>
+</div>
+{% for fol in follow %}
+<div class="podSeguito">
+  <article id="following">
+    <div class="d-flex border-top border-bottom p-2 mx-2">
+      <div class="col-lg-3 col-3">
+        <img class="pod-img" src="{{ url_for('static', filename=fol.immagine) }}" alt="Copertina del podcast su {{fol.titolo}}">
+      </div>
+      <section class="col-lg-9 col-9">
+          <h2 class="display-5 titlePodcast">{{fol.titolo}}</h2>
+          <div class="d-flex">
+            <h5">by {{fol.nickname}}</h5>
+          <a href="{{url_for('single_pod', id=fol.podcast_id)}}" type="button" class="btn btn-light blueBtn mx-3">Vai al podcast</a>
+          </div>
+          <p class="mt-2">{{fol.descrizione}}</p>
+      </section>
+    </div> 
+  </article>
+</div>
+{% endfor %}
+{% endif %}
+{% endblock %}

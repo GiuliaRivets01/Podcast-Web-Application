@@ -1,0 +1,33 @@
+﻿Istruzioni per l’applicazione web
+
+
+Target di dispositivi
+Principalmente pensato per essere usato su un computer, ma adatto anche all’utilizzo su tablet.
+
+
+
+
+Informazioni sugli utenti
+
+
+Nome utente: francesca01
+Password: informatica
+Tipo di utente: ascoltatore
+
+
+Nome utente: Giovanni89
+Password: dipintoblu
+Tipo di utente: creatore
+
+
+Nome utente: sara_bianchi
+Password: calcolatrice
+Tipo di utente: creatore
+
+
+Nome utente: marioRossi
+Password: molecole
+Tipo di utente: creatore
+
+
+Gli utenti di tipo ‘ascoltatore’ hanno un valore assegnato di 0, mentre quelli di tipo ‘creatore’ hanno un valore assegnato di 1.

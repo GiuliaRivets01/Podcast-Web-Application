@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="it">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="keywords" content="web, blog, html, css">
+
+    <title>{% block title %} {% endblock %}</title>
+
+    <!-- Bootstrap -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-Zenh87qX5JnK2Jl0vWa8Ck2rdkQ2Bzep5IDxbcnCeuOxjzrPF/et3URy9Bv1WTRi" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.2/font/bootstrap-icons.css">
+
+    <!-- CSS stylesheet -->
+    <link href="{{ url_for('static', filename='style.css') }}" rel="stylesheet">
+
+    <!-- JavaScript -->
+    <script defer src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-OERcA2EqjJCMA+/3y+gxIOqMEjwtxJY7qPCqsdltbNJuaOe923+mo//f6V8Qbsw3" crossorigin="anonymous"></script>
+    <script defer src="{{ url_for('static', filename='app.js') }}"></script>
+  
+  </head>
+
+  <body>
+    <header id="myheader">
+      <nav class="navbar navbar-dark navbar-expand-lg mynavbar">
+        <div class="container-fluid">
+          <h1 class="display-5">Policast</h1>
+  
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+          </button>
+          <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            <ul class="navbar-nav ms-auto navLinks">
+
+              <!-- Se l'utente ha effettuato il login, può vedere nella navbar il suo nome e ha la possibilità di effettuare il logout-->
+              {% if current_user.is_authenticated %}
+              <li class="nav-item dropdown dropstart">
+                <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                  @{{current_user.nickname}}
+                </a>
+                <ul class="dropdown-menu dropdown-menu-dark">
+                  <li><a class="dropdown-item" href="{{ url_for('logout') }}">Esci</a></li>
+                </ul>
+              </li>
+              <!-- Se l'utente non ha ancora effettuato l'accesso, vede nella navbar il bottone per accedere al suo account o per registrarsi -->
+              {% else %}
+              <li class="nav-item">
+                <div class="btn-group loginButton">
+                  <button type="button" class="btn btn-outline-light dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+                    Accedi
+                  </button>
+                  <ul class="dropdown-menu">
+                    <li><a class="dropdown-item" href="{{ url_for('login') }}">Accedi</a></li>
+                    <li><a class="dropdown-item" href="{{ url_for('signup') }}">Registrati</a></li>
+                  </ul>
+                </div>
+              </li>
+              {% endif %}
+
+              <!-- Link per poter tornare alla pagina 'home' o andare alla pagina 'profilo' anche da altre pagine.
+                Il blocco active serve per poter visualizzare il link della pagina 'home' come attivo anche da altre pagine.
+                Lo stesso vale per il blocco della pagina 'profilo'-->
+              <li class="nav-item">
+                <a class="nav-link {% block home_active %}{% endblock %}" aria-current="page" href="/">Home</a>
+              </li>
+              <li class="nav-item">
+                <!-- La pagina 'profilo' dell'utente viene mostrata solo se l'utente ha effettuato il login -->
+                {% if current_user.is_authenticated %}
+                <a class="nav-link {% block profile_active %}{% endblock %}" href="{{url_for('profilo', id=current_user.id)}}">Profilo</a>
+                {% endif %}
+              </li>
+
+            </ul>
+          </div>
+        </div>
+      </nav>
+      
+      <!-- In questo modo quando l'utente crea/modifica/cancella un podcast/utente/episodio, visualizza un
+      messaggio di successo o fallimento per capire se l'operazione è andata a buon fine oppure no -->
+      {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+      {% for category, message in messages %}
+      <div class="alert alert-{{category}} alert-dismissible fade show" role="alert">
+        {{ message }}
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+      </div>
+      {% endfor %}
+      {% endif %}
+      {% endwith %}
+    </header>
+
+    <div class="container-fluid under-nav">
+      <div class="row">
+        <!-- Blocco per l'aside in modo che possa essere facilmente usato anche in altre pagine html -->
+        <aside id="asideId" class="{%block nav_size %}{% endblock %}">
+          {% block asideBlock %} {% endblock %}
+        </aside>
+
+        <main class="{% block main_size %}{% endblock %}">
+          {% block content %} {% endblock %}
+        </main>
+      </div>
+    </div> 
+
+    
+    <footer class="d-flex flex-wrap justify-content-between align-items-center py-3 me-2">
+      <div class="col-md-4 d-flex align-items-center">
+        <span class="mb-3 mb-md-0 text-muted">© 2022-2023 Policast</span>
+      </div>
+      <ul class="nav col-md-4 justify-content-end list-unstyled d-flex">
+        <li class="ms-3"><a class="text-muted" href="#"><i class="bi bi-twitter"></i></a></li>
+        <li class="ms-3"><a class="text-muted" href="#"><i class="bi bi-instagram"></i></a></li>
+        <li class="ms-3"><a class="text-muted" href="#"><i class="bi bi-envelope"></i></a></li>
+      </ul>
+    </footer>
+    
+  </body>
+</html>

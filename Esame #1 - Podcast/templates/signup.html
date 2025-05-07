@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+{% block title %}Registrati{% endblock %}
+{% block signup_active %}active{% endblock %}
+
+{% block display %}d-none{% endblock %}
+{% block main_size %}col-12{% endblock %}
+ 
+{% block content %}
+<div class="col-5 bg-light p-4 border rounded formBlock">
+    <h5 class="display-6"><strong>Signup to Policast</strong></h5>
+    <form action="/iscriviti" method="POST" enctype="multipart/form-data">
+        <label for="nicknameInput" class="form-label">Nickname</label>
+        <div class="input-group mb-3">
+            <span class="input-group-text">@</span>
+            <input type="text" class="form-control" name="nickname" id="nicknameInput" required minlength="5"
+                maxlength="20">
+        </div>
+        <div class="mb-3">
+            <label class="form-label">Vuoi essere un creatore o ascoltatore?</label>
+            <select name="tipo" class="form-select" aria-label="Creatore o ascoltatore">
+              <option value="0">Ascoltatore</option>
+              <option value="1">Creatore</option>
+            </select>
+        </div>
+        <div class="mb-3">
+            <label for="tipodInput" class="form-label">Password</label>
+            <input type="password" class="form-control" name="password" id="passwordInput" required minlength="5"
+                maxlength="20">
+        </div>
+        <div class="mb-3">
+            <label for="immagineInput" class="form-label">Immagine di profilo</label>
+            <input type="file" class="form-control" name="immagine_profilo" id="immagineFile" required>
+        </div>
+        <button type="submit" data-label="registrati" id="signinButton" class="btn btn-light blueBtn">Registrati</button>
+    </form>
+ </div>
+ {% endblock %}
+ 

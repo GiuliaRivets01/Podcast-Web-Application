@@ -1,0 +1,120 @@
+{% extends "base.html" %}
+{% block title %}Home{% endblock %}
+{% block home_active %}active{% endblock %}
+
+{% block nav_size %}col-lg-3 col-12 mt-2{% endblock %}
+{% block main_size %}col-lg-9 col-12{% endblock %}
+
+{% block asideBlock %}
+<section class="asideSection">
+  <!-- FILTRA PODCAST PER CATEGORIA -->
+  <div id="sezioneDrop" class="dropdown directionDrop">
+    <button type="button" class="btn dropdown-toggle btn-light blueBtn" data-bs-toggle="dropdown" aria-expanded="false">
+      Cerca per categoria
+    </button>
+    <ul class="dropdown-menu">
+      <li><a class="dropdown-item" href="#" data-tag="Tutti">Tutti</a></li>
+      <li><a class="dropdown-item" href="#"data-tag="Cucina">Cucina</a></li>
+      <li><a class="dropdown-item" href="#" data-tag="Giallo">Giallo</a></li>
+      <li><a class="dropdown-item" href="#" data-tag="Fantasy">Fantasy</a></li>
+      <li><a class="dropdown-item" href="#" data-tag="Storia">Storia</a></li>
+      <li><a class="dropdown-item" href="#" data-tag="Storia">Benessere</a></li>
+    </ul>
+  </div>
+</section>
+{% endblock %}
+
+
+{% block content %}
+
+<!-- PODCASTS -->
+{% for pod in podcasts %}
+  <article id="pod_cast">
+    <div class="container border-top border-bottom p-2 mx-2">
+      <div>
+        <img class="pod-img" src="{{ url_for('static', filename=pod.immagine) }}" alt="Copertina del podcast su {{pod.titolo}}">
+      </div>
+      <section>
+        <div class="d-flex justify-content-between">
+          <h2 class="display-5 titlePodcast">{{pod.titolo}}</h2>
+          <a href="{{url_for('single_pod', id=pod.id)}}" type="button" id="btnListen" class="btn btn-light blueBtn mx-3">Vai al podcast</a>
+        </div>
+        <h5>@{{pod.nickname}}</h5>
+        <p id="cat"><strong>{{pod.categoria}}</strong></p>
+        <p class="mt-2">{{pod.descrizione}}</p>
+
+        {% if pod.lista_episodi %} <!-- Se la lista episodi non è vuota, viene mostrata -->
+        <p><strong>Episodi che puoi trovare in queston podcast:</strong><em>{{pod.lista_episodi}}</em></p>
+        {% endif %}
+   
+      </section>
+    </div> 
+  </article>
+
+{% endfor %}
+
+<!-- CREA PODCAST -->
+<!-- Se l'utente ha effettuato il login e se l'utente è di tipo 'creatore', può visualizzare il bottone
+per poter creare un nuovo podcast -->
+{% if current_user.is_authenticated %}
+{% if current_user.tipo %}
+<button type="button" class="mybutton plusButton" data-bs-toggle="modal" data-bs-target="#createModal">
+  +
+</button>
+<div class="modal fade" id="createModal" tabindex="-1">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h1 class="modal-title fs-5">Crea un nuovo podcast</h1>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <form action="/podcasts/new" method="POST" enctype="multipart/form-data">
+        <div class="modal-body">
+          <fieldset disabled>
+            <div class="mb-3">
+              <label for="usrnameTextInput" class="form-label">Nickname</label>
+              <input type="text" id="usrnameTextInput" name="nickname" class="form-control" 
+              placeholder="{{current_user.nickname}}" minlength="3" maxlength="20">
+            </div>
+          </fieldset>
+          <div class="mb-3">
+            <label for="titleTextInput" class="form-label">Aggiungi un titolo</label>
+            <input class="form-control" type="text" name="titolo" id="titleTextInput"
+            placeholder="Titolo" minlenght="3" maxlength="20" required>
+          </div>
+          <div class="mb-3">
+            <label for="podTextarea" class="form-label">Descrizione</label>
+            <textarea class="form-control" id="podTextarea" name="descrizione" rows="3"
+              placeholder="Descrizione podcast..." required minlength="20" maxlength="200"></textarea>
+          </div>
+          <div class="mb-3">
+            <label for="imageFile" class="form-label">Aggiungi un'immagine</label>
+            <input class="form-control" name="immagine" type="file" id="imageFile" required>
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Seleziona una categoria</label>
+            <select name="categoria" class="form-select" aria-label="Scegli una categoria">
+              <option value="Cucina">Cucina</option>
+              <option value="Giallo">Giallo</option>
+              <option value="Fantasy">Fantasy</option>
+              <option value="Storia">Storia</option>
+              <option value="Benessere">Benessere</option>
+            </select>
+          </div>
+          <div class="mb-3">
+            <label for="listTextArea" class="form-label">Aggiungi i titolo degli episodi di questo podcast, se vuoi</label>
+            <input class="form-control" type="text" name="lista_episodi" id="listTextArea" rows="3" 
+            placeholder="Episodio1 Episodio2 Episodio3" maxlength="50">
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Chiudi</button>
+          <button type="submit" class="btn btn-primary">Crea Podcast</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+{% endif %}
+{% endif %}
+{% endblock %}

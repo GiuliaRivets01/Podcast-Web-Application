@@ -1,0 +1,235 @@
+{% extends "base.html" %}
+{% block title %}{{pod.nickname}}{% endblock %}
+{% block home_active %}active{% endblock %}
+
+<!-- Questi due blocchi servono per poter cambiare la grandezza assegnata alla navbar e al main 
+in modo diverso in base alla pagina in cui siamo -->
+{% block nav_size %}col-lg-3 col-12{% endblock %}
+{% block main_size %}col-lg-9 col-12{% endblock %}
+
+{% block asideBlock %}
+<div>
+  {% if episodi %}
+  <!-- RICERCA DI UN EPISODIO PER TITOLO O DESCRIZIONE -->
+  <div class="containerSearch">
+    <section class="searchByTitle">
+      <p class="cercaEpTitolo">Cerca episodio per titolo:</p>
+      <form id="formToSearch" class="form d-flex justify-content-center my-2 my-lg-0">
+        <input type="text" placeholder="Titolo" id="myInput" class="form-control w-50" aria-label="Search">
+        <!-- Quando il bottone "cerca" viene cliccato dall'utente, viene chiamata la funzione getInputValue() (presente
+          nel file app.js) per poter prendere dall'utente la parola appena inserita nel campo di ricerca del testo -->
+        <button id="searchBtn" class="btn btn-light blueBtn" type="button" onclick="getInputValue();"><i class="bi bi-search"></i> Cerca</button>
+      </form>
+    </section>
+    
+    <section class="searchByDescription">
+      <p class="cercaEpDescrizione">Cerca episodio per descrizione:</p>
+      <form id="formToSearch" class="form d-flex justify-content-center my-2 my-lg-0">
+        <input type="text" placeholder="Descrizione..." id="myInput2" class="form-control w-50" aria-label="Search">
+        <button id="searchBtn" class="btn btn-light blueBtn" type="button" onclick="getInputVal();"><i class="bi bi-search"></i> Cerca</button>
+      </form>
+    </section>
+  </div>
+  {% endif %}
+
+  <!-- MODIFICA PODCAST -->
+  <!-- Se l'utente ha effettuato il login e se l'utente è di tipo 'creatore', può visualizzare il bottone
+  per poter modificare o creare un podcast già esistente -->
+  {% if current_user.is_authenticated %}
+  {% if current_user.tipo %}
+  <section class="modifyDelete">
+    <p id="modifica" class="{{'hide' if current_user.id != pod.autore_id}}">Modifica o elimina podcast:</p>
+    <div class="d-flex reverse justify-content-center">
+      <!-- La condizione 'if' per la classe 'hide' serve per poter far visualizzare il bottone di modifica e quello di 
+      elimina podcast solo se l'attuale utente è colui che ha creato il podcast, cosicchè solo il creatore di un podcast
+      possa modificarlo o eliminarlo-->
+    <button type="button" id="modBtn" class="btn btn-light blueBtn mx-3 mb-3 {{'hide' if current_user.id != pod.autore_id}}" data-bs-toggle="modal" data-bs-target="#modifyPod">
+      Modifica
+    </button>
+    <div class="modal fade" id="modifyPod" tabindex="-1">
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h1 class="modal-title fs-5">Modifica questo podcast</h1>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <form action="/podcasts/modify" method="POST" enctype="multipart/form-data">
+            <div class="modal-body">
+              <div class="mb-3">
+                <label for="titleTextInput" class="form-label">Titolo</label>
+                <input class="form-control" type="text" name="titolo" id="titleTextInput"
+                placeholder="Titolo" minlenght="3" maxlength="20" required>
+              </div>
+              <div class="mb-3">
+                <label for="imageFile" class="form-label">Immagine</label>
+                <input class="form-control" name="immagine" type="file" id="imageFile" required>
+              </div>
+              <div class="mb-3">
+                <label for="podTextarea" class="form-label">Descrizione</label>
+                <textarea class="form-control" id="podTextarea" name="descrizione" rows="3"
+                  placeholder="Descrizione podcast..." required minlength="20" maxlength="200"></textarea>
+              </div>
+              <div class="mb-3">
+                <label class="form-label">Seleziona una categoria</label>
+                <select name="categoria" class="form-select" aria-label="Scegli una categoria">
+                  <option value="Cucina">Cucina</option>
+                  <option value="Giallo">Giallo</option>
+                  <option value="Fantasy">Fantasy</option>
+                </select>
+              </div>
+              <div class="mb-3">
+                <input type="hidden" name="id" value="{{ pod.id }}" />
+              </div>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Chiudi</button>
+              <button type="submit" class="btn btn-primary">Modifica podcast</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+    
+    <!-- ELIMINA PODCAST-->
+    <form action="/podcasts/delete" method="POST" enctype="multipart/form-data">
+      <div class="mb-3">
+        <button name="delete" id="delBtn" value="Delete" class="btn btn-danger mx-3 {{'hide' if current_user.id != pod.autore_id}}">Elimina</button>
+      </div>
+      <div class="mb-3">
+        <input type="hidden" name="id" value="{{ pod.id }}" />
+      </div>
+    </form>
+  </section>
+  {% endif %}
+  {% endif %}
+</div>
+{% endblock %}
+
+<!-- PODCAST -->
+{% block content %}
+  <article class="article2">
+    <header class="d-flex align-items-center">
+      <div class="col-lg-5 col-6">
+        <img class= "px-3 py-2 immaginePod" src="{{ url_for('static', filename=pod.immagine) }}" alt="Copertina del podcast su {{pod.titolo}}">
+      </div>
+      <section class="col-lg-7 col-6">
+        <div>
+          <p class="mb-0" class="podCategoria">{{pod.categoria}}</p>
+        <h2 class="display-5"><strong>{{pod.titolo}}</strong></h2>
+        <h5>@{{pod.nickname}}</h5>
+        </div>
+        <div>
+          <p>{{pod.descrizione}}</p>
+        </div>
+
+        <!-- AGGIUNGI EPISODIO -->
+        <!-- Se l'utente ha effettuato il login e se l'utente è di tipo 'creatore', può visualizzare il bottone
+          per poter creare un nuovo episodio -->   
+        {% if current_user.is_authenticated %}
+        {% if current_user.tipo %}
+        <!-- L'if statement per la classe 'hide' serve perchè un episodio può solo essere creato solo dal creatore del 
+        podcast in cui si trova tale episodio -->
+        <button type="button" class="btn addEpisodes {{'hide' if current_user.id != pod.autore_id}}" data-bs-toggle="modal" data-bs-target="#createModal">
+          <i class="bi bi-plus-circle"></i> Aggiungi episodio
+        </button>
+
+        <div class="modal fade" id="createModal" tabindex="-1">
+          <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h1 class="modal-title fs-5">Crea un nuovo episodio</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+              </div>
+              <form action="/episodes/new" method="POST" enctype="multipart/form-data">
+                <div class="modal-body">
+                  <div class="mb-3">
+                    <label for="titleTextInput" class="form-label">Aggiungi un titolo</label>
+                    <input class="form-control" type="text" name="titolo" id="titleTextInput" 
+                    placeholder="Titolo" minlenght="3" maxlength="35" required>
+                  </div>
+                  <div class="mb-3">
+                    <label for="podTextarea" class="form-label">Descrizione</label>
+                    <textarea class="form-control" id="podTextarea" name="descrizione" rows="3"
+                      placeholder="Descrizione episodio..." required minlength="20" maxlength="400"></textarea>
+                  </div>
+                  <div class="mb-3">
+                    <label for="dateTextInput" class="form-label">Seleziona una data</label>
+                    <input class="form-control" type="date" name="data" id="dateTextInput" required>
+                  </div>
+                  <div class="mb-3">
+                    <label for="audioTextInput" class="form-label">Aggiungi un file audio</label>
+                    <input class="form-control" type="file" name="file_audio" id="audioTextInput" placeholder="esempio.mp3" required>
+                  </div>
+                  <div class="mb-3">
+                    <input type="hidden" name="podcast_id" value="{{ pod.id }}" />
+                  </div>
+                </div>
+                <div class="modal-footer">
+                  <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Chiudi</button>
+                  <button type="submit" class="btn btn-primary">Crea episodio</button>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+        {% endif %}
+        {% endif %}
+
+        <!-- FOLLOW -->
+        <!-- Per la possibilità di seguire un podcast. 
+        Se l'utente ha effettuato il login ed è già associato nella tabella follow al podcast che sta 
+        attualemnte visualizzando, allora l'utente visualizza il bottone 'seguito' (disabilitato) -->
+        {% if current_user.is_authenticated %}
+
+        {% if user_in_db %}
+        <form action="/unfollow" method="POST" enctype="multipart/form-data">
+          <div class="mb-3">
+            <button id="unfollowBtn" class="btn btn-light blueBtn {{'hide' if current_user.id == pod.autore_id}}">Seguito</button>
+          </div>
+          <div class="mb-3">
+            <input type="hidden" name="podcast_id" value="{{ pod.id }}" />
+          </div>
+        </form>
+
+        {% else %}
+          <!-- Se, invece, l'utente non ha ancora seguito il podcast (non è ancora presenre una riga nella tabella
+            follow che lo associ all'attuale podcast) visualizza un bottone 'segui' per poter seguire il podcast. -->
+        <form action="/follow" method="POST" enctype="multipart/form-data">
+          <div class="mb-3">
+            <!-- L'if statement per la classe 'hide' serve per far visuallizzare il bottone 'Segui' solo se il podcast non 
+            è stato creato dall'utente stesso. Ciò significa che l'utente non ha la possibilità di seguire un proprio podcast. -->
+            <button id="followBtn" class="btn btn-light blueBtn {{'hide' if current_user.id == pod.autore_id}}">Segui</button>
+         </div>
+         <div class="mb-3">
+           <input type="hidden" name="podcast_id" value="{{ pod.id }}" />
+         </div>
+        </form>
+        {% endif %}
+        {% endif %}
+      </section>
+    </header>
+
+    <!-- EPISODI -->
+    {% for ep in episodi %}
+    <div id="epis" class="container3 mt-2 border-top border-2">
+      <section class="episodio mt-2">
+          <div class="d-flex">
+            <div class="col-lg-3 col-6">
+              <img class="p-2 podImage" src="{{ url_for('static', filename=pod.immagine) }}" alt="Copertina dell'episodio su {{ep.titolo}}">
+            </div>
+            <div class="col-lg-9 col-6">
+              <div class="d-flex justify-content-between align-items-center">
+                <h2 id="titoloEp">{{ep.titolo}}</h2>
+                <p>{{ep.data}}</p>
+              </div>
+              <p id="descr" class="mb-1">{{ep.descrizione}}</p>
+              <a href="{{url_for('single_ep', id=ep.id)}}" type="button" class="btn btn-light blueBtn">Vai all'episodio</a>
+
+            </div>
+          </div>
+      </section>
+    </div>
+    {% endfor %}
+  </article>
+{% endblock %}
+

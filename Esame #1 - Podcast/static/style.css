@@ -1,0 +1,305 @@
+.mynavbar {
+    background-color: rgb(25, 95, 155);
+}
+
+.backToPod {
+    margin-left: 3%;
+}
+
+#myheader h1 {
+    color: white;
+    margin-left: 5%;
+}
+.addEpisodes {
+    background-color: rgb(25, 95, 155);
+    color:white;
+}
+#btnListen {
+    margin-top: auto;
+    margin-bottom: auto;
+}
+aside {
+    text-align: center;
+}
+
+aside > div > ul > li {
+    list-style-type: none;
+}
+.navLinks {
+    margin-right: 5%;
+}
+.singoloEp {
+    align-items: center;
+}
+
+body > div{
+    margin-top: 3%;
+}
+
+footer {
+    margin-left: 0.5rem;
+}
+
+article {
+    margin-right: 3%;
+}
+
+.container {
+    display: flex;
+    
+}
+section {
+    flex: 2.5;
+}
+.container > div {
+    flex: 1;
+}
+.pod-img {
+    width: 90%;
+}
+
+.description {
+    margin-top: 3%;
+}
+
+.post-img {
+    border-radius: 50%;
+    width: 50%;
+}
+
+.container2 {
+    margin-top: 3%;
+    margin-right: 15%;
+}
+
+.podImage{
+    width: 90%;
+    border-radius: 10%;
+}
+
+.copertinaPod {
+    width: 85%;
+}
+
+.iconaPlay {
+    width: 90%;
+}
+
+.mainSize {
+  margin-right: 7%;
+  margin-left: 7%;
+}
+.podSeguito {
+    margin-left: 7%;
+    margin-right: 7%;
+}
+.testoPodSeguito {
+    margin-top: 3%;
+    margin-left: 8%;
+}
+#paginaPersonale {
+    margin-left: 7%;
+}
+
+.mybutton {
+    background-color: rgb(25, 95, 155);
+    border: none;
+    border-radius: 50%;
+    bottom: 30px;
+    color: white;
+    height: 60px;
+    position: fixed;
+    right: 30px;
+    text-align: center;
+    text-decoration: none;
+    vertical-align: middle;
+    width: 60px;
+}
+
+.formBlock {
+    margin: auto;
+    padding-top: 15%;
+}
+
+.titlePodcast {
+    margin-right: 7%;
+}
+
+.hide {
+    display: none;
+}
+
+#modifica {
+    margin-top: 30px;
+    margin-bottom: 7px;
+}
+
+#searchBtn {
+    margin-top: 3%;
+    margin-left: 2%;
+}
+
+#myInput {
+    margin-right: 2%;
+}
+
+.profileImage {
+    width: 60%;
+    border-radius: 50%;
+    margin-right: 10%;
+}
+
+.disabled {
+    pointer-events: none;
+    opacity: .65;
+  }
+
+.blueBtn {
+    background-color: rgb(25, 95, 155);
+    color: white;
+}
+
+.imgProfile {
+    text-align: end;
+}
+
+.testoProfilo {
+    font-size: 23px;
+}
+
+.podCategoria {
+    font-size: 16px;
+}
+
+#sezioneDrop {
+    margin-top: 10%;
+}
+
+.podPiuSeguito {
+    font-size: 19px;
+}
+
+.containerAside {
+    border-radius: 25px;
+    border: 1.5px solid rgb(25, 95, 155);
+    padding-top: 20px;
+    padding-bottom: 20px;
+    width: 80%;
+    margin: auto;
+}
+.cercaEpTitolo {
+    margin-top: 4%;
+    margin-bottom: 2%;
+}
+.cercaEpDescrizione {
+    margin-top: 4%;
+    margin-bottom: 2%;
+}
+.immaginePod {
+    width: 100%;
+}
+footer {
+    margin-top: 2%;
+    margin-bottom: 2%;
+}
+.singoloEpText {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 2%;
+}
+.podcastImage {
+    width: 90%;
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+    
+}
+.commentSection {
+    margin-left: 3%;
+    width: 50%;
+}
+@media (max-width: 991.98px) {
+    .containerSearch {
+        display: flex;
+    }
+    .searchByTitle {
+        display: flex;
+        flex-direction: column;
+    }
+    .searchByDescription {
+        display: flex;
+        flex-direction: column;
+    }
+    .modifyDelete{
+        margin-top: 2%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    .cercaEpTitolo {
+        margin-top: 0%;
+        margin-bottom: 0%;
+    }
+    .cercaEpDescrizione {
+        margin-top: 0%;
+        margin-bottom: 0%;
+    }
+    #modifica {
+        margin-top: 0%;
+    }
+    footer {
+        margin-top: 0%;
+    }
+
+    .asideSection {
+        display: flex;
+    }
+    .containerAside {
+        flex: 1;
+        margin-top: 0%;
+        padding-top: 1%;
+        padding-bottom: 1%;
+        margin-left: 8%;
+    }
+    .containerAside > h5 {
+        width: 70%;
+        margin-left: auto;
+        margin-right: auto;
+    }
+    #sezioneDrop {
+        flex: 1;
+    }
+    #pod_cast {
+        margin-top: 3%;
+    }
+    .singoloEp {
+        align-items: flex-start;
+    }
+    .singoloEpText {
+        display: flex;
+
+    }
+    .epOptions {
+        display: flex;
+    }
+    .commentSection {
+        width: 97%;
+    }
+    .profileImage {
+        width: 90%;
+    }
+    .podSeguito {
+        margin-left: 3%;
+        margin-right: 3%;
+    }
+    .testoPodSeguito {
+        margin-left: 3%;
+    }
+    .asideSection {
+        width: 20%;
+    }
+    audio {
+        width: 100%;
+    }
+}

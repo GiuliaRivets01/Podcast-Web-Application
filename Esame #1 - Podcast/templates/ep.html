@@ -1,0 +1,157 @@
+{% extends "base.html" %}
+{% block title %}{{ep.titolo}}{% endblock %}
+{% block home_active %}active{% endblock %}
+
+{% block main_size %}col-12{% endblock %}
+
+{% block content %}
+<article>
+  <!-- EPISODIO -->
+  <a href="{{url_for('single_pod', id=ep.podcast_id)}}" type="button" class="btn btn-light blueBtn backToPod"><i class="bi bi-arrow-left-square"></i> Torna al podcast</a>
+  <div class="d-flex singoloEp">
+    <div class="col-lg-4 col-6">
+      <img class= "px-3 py-2 podcastImage" src="{{ url_for('static', filename=ep.immagine) }}" alt="Copertina del podcast su {{ep.titolo_pod}}">
+    </div>
+
+    <section class="col-lg-8 col-6">
+      <div class="singoloEpText">
+        <h2>{{ep.titolo}}</h2>
+
+        <!-- MODIFICA O ELIMINA EPISODIO -->
+        {% if current_user.is_authenticated %}
+        {% if current_user.tipo %} <!-- Se lo user è di tipo creatore -->
+        <div class="dropdown">
+          <!-- Bottone per modificare o eliminare un episodio. Può essere visualizzato solo se l'attuale utente
+          è colui che ha creato l'episodio -->
+          <button class="btn btn-light blueBtn dropdown-toggle {{'hide' if current_user.id != ep.autore_id}}" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+            <i class="bi bi-pencil-square"></i>
+          </button>
+          <ul class="dropdown-menu">
+            <li>
+              <button id="modEp" class="btn" data-bs-toggle="modal" data-bs-target="#modifyEp">Modifica</a>
+            </li>
+            <li>
+              <hr class="dropdown-divider">
+            </li>
+            <li>
+              <form action="/episodes/delete" method="POST" enctype="multipart/form-data">
+                <div class="mb-3">
+                  <button id="delEp" name="delete" value="Delete" class="btn">Elimina</button>
+                </div>
+                <div class="mb-3">
+                  <input type="hidden" name="id" value="{{ ep.id }}" />
+                </div>
+                <div class="mb-3">
+                  <input type="hidden" name="podcast_id" value="{{ ep.podcast_id }}" />
+                </div>
+                <div class="mb-3">
+                  <input type="hidden" name="titolo" value="{{ ep.titolo }}" />
+                </div>
+              </form>
+            </li>
+          </ul>
+          <div class="modal fade" id="modifyEp" tabindex="-1">
+            <div class="modal-dialog modal-dialog-centered">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h1 class="modal-title fs-5">Modifica questo episodio</h1>
+                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <form action="/episodes/modify" method="POST" enctype="multipart/form-data">
+                  <div class="modal-body">
+                    <div class="mb-3">
+                      <label for="titleTextInput" class="form-label">Titolo</label>
+                      <input class="form-control" type="text" name="titolo" id="titleTextInput" 
+                      placeholder="Titolo" minlenght="3" maxlength="20" required>
+                    </div>
+                    <div class="mb-3">
+                      <label for="podTextarea" class="form-label">Descrizione</label>
+                      <textarea class="form-control" id="podTextarea" name="descrizione" rows="3"
+                        placeholder="Descrizione episodio..." required minlength="20" maxlength="200"></textarea>
+                    </div>
+                    <div class="mb-3">
+                      <label for="audioTextInput" class="form-label">File audio</label>
+                      <input class="form-control" type="file" name="file_audio" id="audioTextInput" 
+                      placeholder="esempio.mp3" required>
+                    </div>
+                    <div class="mb-3">
+                      <input type="hidden" name="id" value="{{ ep.id }}" />
+                    </div>
+                  </div>
+                  <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Chiudi</button>
+                    <button type="submit" class="btn btn-primary">Modifica episodio</button>
+                  </div>
+                </form>
+              </div>
+            </div>
+          </div>
+        </div>
+        {% endif %}
+        {% endif %}
+
+      </div>
+      <p>{{ep.data}}</p>
+      <p class="mb-1">{{ep.descrizione}}</p>
+      
+      {% if current_user.is_authenticated %}
+      <figure>
+        <figcaption>Ascolta l'episodio:</figcaption>
+        <audio class="mt-2" controls src="{{ url_for('static', filename=ep.file_audio) }}">
+          <a href="{{ url_for('static', filename=ep.file_audio) }}">Download audio</a>
+        </audio>
+      </figure>
+      {% endif %}
+    </section>
+  </div>
+
+  <!-- COMMENTI DELL'EPISODIO -->
+  <div class="commentSection">
+    <hr class="border">
+    {% for commento in commenti %}
+  <div class="d-flex align-items-center">
+    <div class="col-lg-2 col-2">
+      <img class= "px-3 w-100 py-2 rounded-circle immagineProfilo" src="{{ url_for('static', filename= commento.immagine_profilo ) }}" alt="Questa è l'immagine dell'utente {{ commento.nickname |e }}">
+    </div>
+    <section class="col-lg-10 col-10">
+      <div class="d-flex justify-content-between align-items-center">
+        <h2>{{commento.nickname}}</h2>
+        <h5>{{commento.data_pubblicazione}}</h5>
+      </div>
+      <div class="d-flex justify-content-between align-items-center">
+        <p>{{commento.testo}}</p>
+        <form action="/comments/delete" method="POST" enctype="multipart/form-data">
+          <div class="mb-3">
+            <!-- La possibilità di eliminare un commento è data solo a chi ha scritto il commento -->
+            <button id="delComm" name="deleteComm" value="DeleteComm" class="btn btn-danger {{'hide' if current_user.id != commento.user_id}}"><i class="bi bi-trash3"></i></button>
+          </div>
+          <div class="mb-3">
+            <input type="hidden" name="id" value="{{ commento.id }}" />
+          </div>
+          <div class="mb-3">
+            <input type="hidden" name="episodio_id" value="{{ ep.id }}" />
+          </div>
+        </form>
+      </div>
+    </section>
+
+
+  </div>
+  {% endfor %}
+
+  <!-- NUOVO COMMENTO -->
+  {% if current_user.is_authenticated %}
+  <form action="/comments/new" method="POST">
+    <div class="mb-3 sezCommento">
+      <textarea class="form-control" id="testoInput" rows="3" placeholder="Nuovo commento..." name="testo"
+      minlength="3" maxlength="200"></textarea>
+      <input type="hidden" name="episodio_id" value="{{ ep.id }}"/>
+      <div class="pt-2 text-end">
+        <button type="submit" class="btn btn-light blueBtn">Invia</button>
+      </div>
+    </div>
+  </form>
+  {% endif %}
+  </div>
+</article>
+{% endblock %}
